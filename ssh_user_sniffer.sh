@@ -1,6 +1,7 @@
 #!/bin/bash
 
 get_users() {
+# extract user names from the authorization system log
 	user=$(cat /var/log/auth.log|
 	grep "user="|
 	awk {'print $15'}|
@@ -8,9 +9,6 @@ get_users() {
 	grep "[a-z]"|
 	tail -1)
 
-	#pass=$(cat strace.out|grep "read(6,"| grep '\\f\\0\\0\\0'|awk {'print $4'}|sed 's/\\f\\0\\0\\0//g'|sed 's/\\[0-9][0-9]//g'|sed 's/\\[0-9]//g'|sed 's/\\n//g'|sed 's/\",//g'|sed 's/^\"//g'|sed 's/\\f//g'|sed 's/\\t//g'|sed 's/\\v//g'>passwords;cat passwords|tail -1)
-	#pass:$pass"
-	#echo "pass:$pass"
 	echo "user:$user"
 }
 
@@ -28,6 +26,8 @@ check_root() {
 # strace must be run as root as ssh is also
 check_root
 
+# iterate through the auth log every 3 seconds
+# track the last user found
 last=""
 while [ 1 ]; do
 	result=$(get_users)
@@ -35,6 +35,5 @@ while [ 1 ]; do
 		echo $result
 		last=$result
 	fi
-	# echo "last: $last checking..."
 	sleep 3
 done
